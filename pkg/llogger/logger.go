@@ -6,17 +6,28 @@ import (
 	"os"
 )
 
+var (
+	std = logger(InfoLevel)
+)
+
 type LeveledLogger struct {
 	l     *log.Logger
 	level int
 }
 
 func NewLogger(loglevel int) *LeveledLogger {
+	std = logger(loglevel)
+	return std
+}
+
+func logger(loglevel int) *LeveledLogger {
 	return &LeveledLogger{
 		l:     log.New(os.Stdout, "", log.Ldate|log.Ltime|log.Lmicroseconds|log.Lshortfile),
 		level: loglevel,
 	}
 }
+
+// Struct Methods
 
 func (l *LeveledLogger) Traceln(msg string) {
 	l.Tracef("%s\n", msg)
@@ -66,4 +77,50 @@ func (l *LeveledLogger) Printf(level int, format, msg string) {
 		l.l.Printf("%s%s", levelText, fmt.Sprintf(format, msg))
 		color.resetColor()
 	}
+}
+
+// Public Methods
+
+func Traceln(msg string) {
+	Tracef("%s\n", msg)
+}
+
+func Debugln(msg string) {
+	Debugf("%s\n", msg)
+}
+
+func Errorln(msg string) {
+	Errorf("%s\n", msg)
+}
+
+func Infoln(msg string) {
+	Infof("%s\n", msg)
+}
+
+func Warnln(msg string) {
+	Warnf("%s\n", msg)
+}
+
+func Tracef(format string, msg string) {
+	Printf(TraceLevel, format, msg)
+}
+
+func Debugf(format, msg string) {
+	Printf(DebugLevel, format, msg)
+}
+
+func Errorf(format string, msg string) {
+	Printf(ErrorLevel, format, msg)
+}
+
+func Infof(format string, msg string) {
+	Printf(InfoLevel, format, msg)
+}
+
+func Warnf(format string, msg string) {
+	Printf(WarnLevel, format, msg)
+}
+
+func Printf(level int, format, msg string) {
+	std.Printf(level, format, msg)
 }
